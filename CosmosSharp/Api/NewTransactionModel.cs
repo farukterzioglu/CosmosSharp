@@ -37,7 +37,7 @@ namespace CosmosSharp.Api
         public List<Event> Events { get; set; }
     }
 
-    public class Transaction
+    public class NewTransaction
     {
         [JsonProperty("height")]
         public string Height { get; set; }
@@ -76,24 +76,24 @@ namespace CosmosSharp.Api
         public StdTx Value { get; set; }
     }
 
-    public class GetTxsResponse
+    public class LatestBlockInfo
     {
         [JsonProperty("total_count")]
-        public int TotalCount { get; set; }
+        public string TotalCount { get; set; }
 
         [JsonProperty("count")]
-        public int Count { get; set; }
+        public string Count { get; set; }
 
         [JsonProperty("page_number")]
-        public int PageNumber { get; set; }
+        public string PageNumber { get; set; }
 
         [JsonProperty("page_total")]
-        public int PageTotal { get; set; }
+        public string PageTotal { get; set; }
 
         [JsonProperty("limit")]
-        public int Limit { get; set; }
+        public string Limit { get; set; }
 
         [JsonProperty("txs")]
-        public List<Transaction> Txs { get; set; }
+        public List<NewTransaction> Txs { get; set; }
     }
 }

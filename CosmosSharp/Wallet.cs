@@ -151,18 +151,29 @@ namespace CosmosSharp
 
         bool verifySignature(StdTx tx, SignMeta meta, StdSignature signature) {
             var signatureBytes = Convert.FromBase64String(signature.SignatureInfo);
-            var publicKey = Convert.FromBase64String(signature.PubKey.Value);
+            if(signature.PubKey.Type == Types.PubKey.PubKeySecp256k1) 
+            {
+                var publicKey = Convert.FromBase64String(signature.PubKey.PubKeySecp256k1Value);
 
-            StdSignMsg signMsg = new StdSignMsg(tx,meta){};
-            var bytes = toCanonicalJSONBytes(signMsg);
-            var hash = sha256(bytes);
-            
-            // TODO: Get signature from string
-            // this.PublicKey.Verify(hash, )
-            throw new NotImplementedException();
+                StdSignMsg signMsg = new StdSignMsg(tx,meta){};
+                var bytes = toCanonicalJSONBytes(signMsg);
+                var hash = sha256(bytes);
+                
+                // TODO: Get signature from string
+                // this.PublicKey.Verify(hash, )
+                throw new NotImplementedException();
+            } 
+
+            if(signature.PubKey.Type == Types.PubKey.PubKeyMultisigThreshold) 
+            {
+                // TODO: Implement this
+                throw new NotImplementedException();
+            }
+
+            throw new NotSupportedException();
         }
+
         // Verify a transaction against a signature
-        // TODO: Verify against multiple signatures
         public bool VerifyTx(StdTx tx,SignMeta meta)
         {
             foreach (var signature in tx.Signatures)

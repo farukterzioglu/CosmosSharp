@@ -12,80 +12,19 @@ using System.Threading.Tasks;
 
 namespace CosmosSharp
 {
-    public interface IRestClientFactory
-    {
-        RestClient Create(string baseUrl);
-    }
-    public class RestClientFactory : IRestClientFactory
-    {
-        RestClient IRestClientFactory.Create(string baseUrl)
-        {
-            return new RestClient(baseUrl);
-        }
-    }
-
-    public interface IRestRequestFactory
-    {
-        RestRequest Create(Method method);
-        RestRequest Create(string url, Method method);
-    }
-    public class RestRequestFactory : IRestRequestFactory
-    {
-        RestRequest IRestRequestFactory.Create(string url, Method method)
-        {
-            return new RestRequest(url, method);
-        }
-
-        RestRequest IRestRequestFactory.Create(Method method)
-        {
-            return new RestRequest(method);
-        }
-    }
-
-    public interface IHttpHandler
-    {
-        Task<TResponseData> GetJsonAsync<TResponseData>(string url, CancellationToken cancellationToken);
-        Task<TResponseData> PostJsonAsync<TResponseData, TRequestData>(string url, TRequestData requestBody);
-        Task<IRestResponse> ExecuteGet(string url, CancellationToken cancellationToken);
-    }
-
     public class HttpHandler : IHttpHandler
     {
-        private IRestClientFactory restClientFactory; 
-        private IRestRequestFactory restRequestFactory;
-
-        public HttpHandler()
-        {
-            this.restClientFactory = new RestClientFactory();
-            this.restRequestFactory = new RestRequestFactory();
-        }
-
-        public HttpHandler(IRestClientFactory restClientFactory, IRestRequestFactory restRequestFactory)
-        {
-            this.restClientFactory = restClientFactory;
-            this.restRequestFactory = restRequestFactory;
-        }
-
-        Task<IRestResponse> IHttpHandler.ExecuteGet(string url, CancellationToken cancellationToken)
-        {
-            var restClient = restClientFactory.Create(url);
-            var request = restRequestFactory.Create(Method.GET);
-
-            return restClient.ExecuteGetTaskAsync(request, cancellationToken);
-        }
-
         async Task<TResponseData> IHttpHandler.GetJsonAsync<TResponseData>(string url, CancellationToken cancellationToken)
         {
-            var restClient = restClientFactory.Create(url);
-            var request = restRequestFactory.Create(Method.GET);
-
-            var response = await restClient.ExecuteGetTaskAsync(request, cancellationToken);
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.GET);
+            var response = await client.ExecuteGetTaskAsync(request, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return default;
             }
-            if (response.StatusCode != HttpStatusCode.OK || response.ErrorException != null)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
                 throw GetApiError(new Uri(url), request, response);
             }
@@ -107,6 +46,8 @@ namespace CosmosSharp
                 throw GetApiError(new Uri(url), request, response);
             }
 
+            if(response.Content == null) throw new Exception($"Response is null. Status code: {response.StatusCode}");
+            
             var result = JsonConvert.DeserializeObject<TResponseData>(response.Content);
             return Task.FromResult(result);
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CosmosSharp.Sdk;
 using Newtonsoft.Json;
@@ -61,13 +62,48 @@ namespace CosmosSharp.Types
         public string Gas { get; set; }
     }
 
-    public class PubKey
+    public class PubKeyMultisigThreshold 
+    {
+        [JsonProperty("threshold", Order=1)]
+        public ushort Threshold { get; set; }
+        
+        [JsonProperty("pubkeys", Order=2)]
+        public List<PubKeySecp256k1> Pubkeys {get; set;}
+    }
+
+    public class PubKeySecp256k1
     {
         [JsonProperty("type", Order=1)]
         public string Type { get; set; }
 
         [JsonProperty("value", Order=2)]
         public string Value { get; set; }
+    }
+
+    public class PubKey
+    {
+        [JsonProperty("type", Order=1)]
+        public string Type { get; set; }
+
+        [JsonProperty("value", Order=2)]
+        public object Value { get; set; }
+
+        public static string PubKeySecp256k1 = "tendermint/PubKeySecp256k1";
+        public static string PubKeyMultisigThreshold = "tendermint/PubKeyMultisigThreshold";
+
+        public string PubKeySecp256k1Value { 
+            get {
+                if(this.Type != PubKeySecp256k1) throw new NotSupportedException();
+                return (string) Value;  
+            }
+        }
+
+        public PubKeyMultisigThreshold PubKeyMultisigThresholdValue { 
+            get {
+                if(this.Type != PubKeyMultisigThreshold) throw new NotSupportedException();
+                return (PubKeyMultisigThreshold) Value;
+            }
+        }
     }
 
     public class StdSignature

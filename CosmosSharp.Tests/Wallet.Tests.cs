@@ -80,6 +80,7 @@ namespace CosmosSharp.Tests
             110,
             121
         };
+
         string wordList = "rich banner swift brush fury tunnel pause forest dose color luggage length";
         string passPhrase = "";
         string expectedAddress = "cosmos1xkqfeym2enqah7mwww0wyksx8u5qplsnsy8nl7";
@@ -113,7 +114,22 @@ namespace CosmosSharp.Tests
 
             Assert.AreEqual(walletMnemo.PrivateKey, walletMster.PrivateKey);
             Assert.AreEqual(walletMnemo.PublicKey, walletMster.PublicKey);
-            Assert.AreEqual(walletMnemo.Address, walletMster.Address);
+        }
+
+        [Test]
+        [Ignore("Fails. Need to control")]
+        public void ShouldSignWhenPropertiesNull()
+        {
+            // Arrange
+            StdTx tx = new StdTx(){};
+            var meta = new SignMeta(){};
+            var signMsg = new StdSignMsg(tx,meta);
+
+            // Act
+            var signedTx = wallet.Sign(signMsg);
+
+            // Assert
+            Assert.AreEqual("+nJXdAjGYTVtMHXS9no5hCJy6KCdDz2CaMhyOS96oFo+IIQFfnALayt2yx6mvUqaTWhWm1MNVf6+7PTdKKqcCw==",signedTx.Signatures.First().SignatureInfo);
         }
 
         [Test]
@@ -210,7 +226,7 @@ namespace CosmosSharp.Tests
             var signedTx = wallet.Sign(signMsg);
             Assert.AreEqual("zbaibf4Dh4wwM0spbZlnUWR9mGN8HwFUqyp29Mf7Ysoa0iVKUZuXrYAfTNP7pmwhMmAgp/3dolIiitQVt9tQIw==",signedTx.Signatures.First().SignatureInfo);
             Assert.AreEqual("tendermint/PubKeySecp256k1", signedTx.Signatures.First().PubKey.Type);
-            Assert.AreEqual("AzykdzV0sacCAYNWIR04V2MY9GRxsnJZj1+xnclJv255", signedTx.Signatures.First().PubKey.Value);
+            Assert.AreEqual("AzykdzV0sacCAYNWIR04V2MY9GRxsnJZj1+xnclJv255", signedTx.Signatures.First().PubKey.PubKeySecp256k1Value);
         }
 
         [Test]
@@ -255,7 +271,7 @@ namespace CosmosSharp.Tests
             var signedTx = wallet.Sign(signMsg);
             Assert.AreEqual("zbaibf4Dh4wwM0spbZlnUWR9mGN8HwFUqyp29Mf7Ysoa0iVKUZuXrYAfTNP7pmwhMmAgp/3dolIiitQVt9tQIw==",signedTx.Signatures.First().SignatureInfo);
             Assert.AreEqual("tendermint/PubKeySecp256k1", signedTx.Signatures.First().PubKey.Type);
-            Assert.AreEqual("AzykdzV0sacCAYNWIR04V2MY9GRxsnJZj1+xnclJv255", signedTx.Signatures.First().PubKey.Value);
+            Assert.AreEqual("AzykdzV0sacCAYNWIR04V2MY9GRxsnJZj1+xnclJv255", signedTx.Signatures.First().PubKey.PubKeySecp256k1Value);
         }
 
         [Test]
@@ -303,7 +319,7 @@ namespace CosmosSharp.Tests
             var signedTx = walletMster.Sign(signMsg);
             Assert.AreEqual("zbaibf4Dh4wwM0spbZlnUWR9mGN8HwFUqyp29Mf7Ysoa0iVKUZuXrYAfTNP7pmwhMmAgp/3dolIiitQVt9tQIw==",signedTx.Signatures.First().SignatureInfo);
             Assert.AreEqual("tendermint/PubKeySecp256k1", signedTx.Signatures.First().PubKey.Type);
-            Assert.AreEqual("AzykdzV0sacCAYNWIR04V2MY9GRxsnJZj1+xnclJv255", signedTx.Signatures.First().PubKey.Value);
+            Assert.AreEqual("AzykdzV0sacCAYNWIR04V2MY9GRxsnJZj1+xnclJv255", signedTx.Signatures.First().PubKey.PubKeySecp256k1Value);
         }
     }
 }
