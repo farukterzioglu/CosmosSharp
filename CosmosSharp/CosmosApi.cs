@@ -85,7 +85,7 @@ namespace CosmosSharp
 
         public async Task<LatestBlockInfo> GetBlock(ulong blockHeight, CancellationToken cancellationToken)
         {
-            var url = $"{_config.HttpEndpoint}//txs?tx.height={blockHeight}";
+            var url = $"{_config.HttpEndpoint}/txs?tx.height={blockHeight}";
             var response = await _httpHandler.GetJsonAsync<LatestBlockInfo>(url, cancellationToken);
             return response;
         }

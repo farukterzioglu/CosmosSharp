@@ -82,7 +82,6 @@ namespace CosmosSharp.Tests
         };
 
         string wordList = "rich banner swift brush fury tunnel pause forest dose color luggage length";
-        string passPhrase = "";
         string expectedAddress = "cosmos1xkqfeym2enqah7mwww0wyksx8u5qplsnsy8nl7";
 
         Wallet wallet;
