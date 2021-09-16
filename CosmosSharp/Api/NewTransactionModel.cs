@@ -48,6 +48,9 @@ namespace CosmosSharp.Api
         [JsonProperty("raw_log")]
         public string RawLog { get; set; }
 
+        [JsonProperty("code")]
+        public int Code { get; set; }
+
         [JsonProperty("logs")]
         public List<Log> Logs { get; set; }
 
