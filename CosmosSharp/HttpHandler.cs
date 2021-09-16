@@ -2,11 +2,8 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,10 +11,18 @@ namespace CosmosSharp
 {
     public class HttpHandler : IHttpHandler
     {
-        async Task<TResponseData> IHttpHandler.GetJsonAsync<TResponseData>(string url, CancellationToken cancellationToken)
+        async Task<TResponseData> IHttpHandler.GetJsonAsync<TResponseData>(string url, Dictionary<string, string> headerKeyValues, CancellationToken cancellationToken)
         {
+            // TODO: RestClient --> HttpClient
             var client = new RestClient(url);
             var request = new RestRequest(Method.GET);
+            if (headerKeyValues != null && headerKeyValues.Count > 0)
+            {
+                foreach (var (key, value) in headerKeyValues)
+                {
+                    request.AddHeader(key, value);
+                }
+            }
             var response = await client.ExecuteGetTaskAsync(request, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
@@ -33,11 +38,19 @@ namespace CosmosSharp
             return result;
         }
 
-        Task<TResponseData> IHttpHandler.PostJsonAsync<TResponseData, TRequestData>(string url, TRequestData requestBody)
+        Task<TResponseData> IHttpHandler.PostJsonAsync<TResponseData, TRequestData>(string url, Dictionary<string, string> headerKeyValues, TRequestData requestBody)
         {
+            // TODO: RestClient --> HttpClient
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
             var body= JsonConvert.SerializeObject(requestBody);
+            if (headerKeyValues != null && headerKeyValues.Count > 0)
+            {
+                foreach (var (key, value) in headerKeyValues)
+                {
+                    request.AddHeader(key, value);
+                }
+            }
             request.AddJsonBody(body);
             var response = client.Execute(request);
 

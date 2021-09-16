@@ -37,9 +37,9 @@ namespace CosmosSharp.Api
 
     public class BroadcastTxResponse
     {
-        public string raw_log { get; set; }
+        public string rawLog { get; set; }
         public uint height { get; set; }
-        public string txhash { get; set; }
+        public string transactionHash { get; set; }
         public int code { get; set; }
         public uint gas_wanted { get; set; }
         public uint gas_used { get; set; }

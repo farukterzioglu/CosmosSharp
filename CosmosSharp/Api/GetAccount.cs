@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CosmosSharp.Types;
 using Newtonsoft.Json;
@@ -9,6 +10,7 @@ namespace CosmosSharp.Api
         [JsonProperty("address")]
         public string Address { get; set; }
 
+        [Obsolete("Doesn't exist no more", error:true)]
         [JsonProperty("coins")]
         public List<Coin> Coins { get; set; }
 

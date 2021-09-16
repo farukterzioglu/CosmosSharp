@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CosmosSharp.Models;
 using CosmosSharp.Api;
+using CosmosSharp.StargateApiModel;
 using CosmosSharp.Types;
 
 namespace CosmosSharp
@@ -54,9 +55,9 @@ namespace CosmosSharp
             return newTx;
         }
 
-        public static StdTx<MsgSend> SignTx(StdTx<MsgSend> atomTransfer, BaseAccount account, Wallet wallet, string chainId)
+        public static StdTx<MsgSend> SignTx(StdTx<MsgSend> atomTransfer, AccountModel account, Wallet wallet, string chainId)
         {
-            SignMeta meta = new SignMeta(){ AccountNumber = account.AccountNumber, Sequence = account.Sequence, ChainId = chainId };
+            SignMeta meta = new SignMeta(){ AccountNumber = account.Account.AccountNumber, Sequence = account.Account.Sequence, ChainId = chainId };
             StdSignMsg<MsgSend> signMsg = new StdSignMsg<MsgSend>(atomTransfer, meta);
             StdTx<MsgSend> signed = wallet.Sign<MsgSend>(signMsg);
             return signed;

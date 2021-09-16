@@ -7,6 +7,7 @@ using CosmosSharp.Types;
 
 namespace CosmosSharp
 {
+    [Obsolete("Use StargateApi", error: false)]
     public class CosmosApi
     {
         private CosmosConfigurator _config { get; set; }
@@ -27,7 +28,7 @@ namespace CosmosSharp
         public async Task<NodeInfoResponse> GetNodeInfo(CancellationToken cancellationToken) 
         {
             var url = string.Format("{0}/node_info", _config.HttpEndpoint);
-            return await _httpHandler.GetJsonAsync<NodeInfoResponse>(url, cancellationToken);
+            return await _httpHandler.GetJsonAsync<NodeInfoResponse>(url, _config.HeaderKeyValues, cancellationToken);
         }
 
         public async Task<StdTx<MsgSend>> CreateAtomTransaction(AtomTransferRequest transferRequest, CancellationToken cancellationToken)
@@ -48,14 +49,14 @@ namespace CosmosSharp
                 }
             };
 
-            AtomTransferResponse response = await _httpHandler.PostJsonAsync<AtomTransferResponse, BankTransferRequest>(url, request);
+            AtomTransferResponse response = await _httpHandler.PostJsonAsync<AtomTransferResponse, BankTransferRequest>(url, _config.HeaderKeyValues, request);
             return response.Value;
         }
 
         public async Task<BaseAccount> GetAccount(string accountName, CancellationToken cancellationToken) 
         {
             var url = $"{_config.HttpEndpoint}/auth/accounts/{accountName}";
-            var response = await _httpHandler.GetJsonAsync<ApiResponseWithHeight<ApiResponse<BaseAccount>>>(url, cancellationToken);
+            var response = await _httpHandler.GetJsonAsync<ApiResponseWithHeight<ApiResponse<BaseAccount>>>(url, _config.HeaderKeyValues, cancellationToken);
             return response?.Result?.Value;
         }
 
@@ -67,7 +68,7 @@ namespace CosmosSharp
                 Mode = mode.ToString()
             };
 
-            var response = await _httpHandler.PostJsonAsync<BroadcastTxResponse,BroadcastTxRequest>(url, request);
+            var response = await _httpHandler.PostJsonAsync<BroadcastTxResponse,BroadcastTxRequest>(url, _config.HeaderKeyValues, request);
             return response;
         }
 
@@ -79,28 +80,28 @@ namespace CosmosSharp
                 Mode = mode.ToString()
             };
 
-            var response = await _httpHandler.PostJsonAsync<BroadcastTxResponse,BroadcastTxRequest<TMsg>>(url, request);
+            var response = await _httpHandler.PostJsonAsync<BroadcastTxResponse,BroadcastTxRequest<TMsg>>(url, _config.HeaderKeyValues, request);
             return response;
         }
 
         public async Task<LatestBlockInfo> GetBlock(ulong blockHeight, CancellationToken cancellationToken)
         {
             var url = $"{_config.HttpEndpoint}/txs?tx.height={blockHeight}";
-            var response = await _httpHandler.GetJsonAsync<LatestBlockInfo>(url, cancellationToken);
+            var response = await _httpHandler.GetJsonAsync<LatestBlockInfo>(url, _config.HeaderKeyValues, cancellationToken);
             return response;
         }
 
         public async Task<BlockInfo> GetLatestBlock(CancellationToken cancellationToken)
         {
             var url = $"{_config.HttpEndpoint}/blocks/latest";
-            var response = await _httpHandler.GetJsonAsync<BlockInfo>(url, cancellationToken);
+            var response = await _httpHandler.GetJsonAsync<BlockInfo>(url, _config.HeaderKeyValues, cancellationToken);
             return response;
         }
 
         public async Task<NewTransaction> GetTx(string txHash, CancellationToken cancellationToken)
         {
             var url = $"{_config.HttpEndpoint}/txs/{txHash}";
-            var response = await _httpHandler.GetJsonAsync<NewTransaction>(url, cancellationToken);
+            var response = await _httpHandler.GetJsonAsync<NewTransaction>(url, _config.HeaderKeyValues, cancellationToken);
             return response;
         }
     }
